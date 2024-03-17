@@ -1154,10 +1154,10 @@ namespace SoapCore.Meta
 					writer.WriteAttributeString("name", name);
 					WriteQualification(writer, isUnqualified);
 
-					if (!isArray)
-					{
-						writer.WriteAttributeString("nillable", "true");
-					}
+					//if (!isArray)
+					//{
+					//	writer.WriteAttributeString("nillable", "true");
+					//}
 
 					writer.WriteAttributeString("type", "tns:" + newTypeToBuild.TypeName);
 
@@ -1173,10 +1173,10 @@ namespace SoapCore.Meta
 					writer.WriteAttributeString("name", name);
 					WriteQualification(writer, isUnqualified);
 
-					if (!isArray)
-					{
-						writer.WriteAttributeString("nillable", "true");
-					}
+					//if (!isArray)
+					//{
+					//	writer.WriteAttributeString("nillable", "true");
+					//}
 
 					if (isListWithoutWrapper)
 					{
