@@ -1047,7 +1047,7 @@ namespace SoapCore.Meta
 					isUnqualified: isUnqualified,
 					defaultValue: defaultValue,
 					hasSpecifiedBoolean: hasSpecifiedBoolean,
-					forceNullable: elementItem?.IsNullable == true);
+					forceNullable: elementItem?.IsNullable);
 			}
 		}
 
@@ -1067,7 +1067,7 @@ namespace SoapCore.Meta
 			AddSchemaType(writer, new TypeToBuild(type), name, isArray, @namespace, isAttribute, isUnqualified: isUnqualified);
 		}
 
-		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false, bool hasSpecifiedBoolean = false, bool forceNullable = false)
+		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false, bool hasSpecifiedBoolean = false, bool? forceNullable = null)
 		{
 			var type = toBuild.Type;
 
@@ -1101,7 +1101,7 @@ namespace SoapCore.Meta
 			}
 
 			var underlyingType = Nullable.GetUnderlyingType(type);
-			if (underlyingType == null && forceNullable)
+			if (underlyingType == null && forceNullable == true)
 			{
 				underlyingType = type;
 			}
@@ -1175,7 +1175,7 @@ namespace SoapCore.Meta
 				}
 				else
 				{
-					writer.WriteAttributeString("minOccurs", (type.IsValueType && defaultValue == null && !hasSpecifiedBoolean) || forceNullable ? "1" : "0");
+					writer.WriteAttributeString("minOccurs", (type.IsValueType && defaultValue == null && !hasSpecifiedBoolean) || forceNullable == true ? "1" : "0");
 					writer.WriteAttributeString("maxOccurs", "1");
 					if (defaultValue != null)
 					{
@@ -1218,7 +1218,10 @@ namespace SoapCore.Meta
 				if (isArray)
 				{
 					writer.WriteAttributeString("maxOccurs", "unbounded");
+					if (forceNullable != false)
+					{
 					writer.WriteAttributeString("nillable", "true");
+				}
 				}
 				else
 				{

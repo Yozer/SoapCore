@@ -962,6 +962,27 @@ namespace SoapCore.Tests.Wsdl
 		}
 
 		[TestMethod]
+		public void CheckNonNullableListUsingXmlElementWsdl()
+		{
+			StartService(typeof(NonNullableListUsingXmlElement));
+			var wsdl = GetWsdlFromAsmx();
+			StopServer();
+			Assert.IsNotNull(wsdl);
+
+			var root = XElement.Parse(wsdl);
+			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
+
+			var nonNullableList = root.XPathSelectElement("//xsd:complexType[@name='NonNullableListUsingXmlElementType']/xsd:sequence/xsd:element[@name='Profile' and @type='tns:NonNullableListUsingXmlElementInnerType' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(nonNullableList);
+
+			var nullableList = root.XPathSelectElement("//xsd:complexType[@name='NonNullableListUsingXmlElementType']/xsd:sequence/xsd:element[@name='Company' and @type='tns:NonNullableListUsingXmlElementInnerType' and @nillable='true' and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(nullableList);
+
+			var nullableList2 = root.XPathSelectElement("//xsd:complexType[@name='NonNullableListUsingXmlElementType']/xsd:sequence/xsd:element[@name='Other' and @type='tns:NonNullableListUsingXmlElementInnerType' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(nullableList2);
+		}
+
+		[TestMethod]
 		public void CheckArrayParameterWithXmlArrayItemAttributeWsdl()
 		{
 			StartService(typeof(ArrayParameterXmlArrayItem));
