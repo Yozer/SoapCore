@@ -279,6 +279,13 @@ namespace SoapCore.Meta
 			bool isUnqualified = elementAttribute?.Form == XmlSchemaForm.Unqualified;
 			var elementName = string.IsNullOrWhiteSpace(elementAttribute?.ElementName) ? null : elementAttribute.ElementName;
 
+			var xmlArrayAttribute = parameterInfo.Parameter.GetCustomAttribute<XmlArrayAttribute>();
+			if (xmlArrayAttribute != null && elementAttribute is null)
+			{
+				isUnqualified = xmlArrayAttribute.Form == XmlSchemaForm.Unqualified;
+				elementName = string.IsNullOrWhiteSpace(xmlArrayAttribute.ElementName) ? null : xmlArrayAttribute.ElementName;
+			}
+
 			var xmlRootAttr = parameterInfo.Parameter.ParameterType.GetCustomAttributes<XmlRootAttribute>().FirstOrDefault();
 			var typeRootName = string.IsNullOrWhiteSpace(xmlRootAttr?.ElementName) ? null : xmlRootAttr.ElementName;
 
@@ -287,12 +294,15 @@ namespace SoapCore.Meta
 								?? typeRootName
 								?? parameterInfo.Parameter.Name;
 
+			var typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType);
+
 			var xmlArrayItemAttribute = parameterInfo.Parameter.GetCustomAttribute<XmlArrayItemAttribute>();
 			var typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType);
 			if (xmlArrayItemAttribute != null)
 			{
 				typeToBuild.ChildElementName = xmlArrayItemAttribute.ElementName;
 		}
+
 			AddSchemaType(writer, typeToBuild, parameterName, @namespace: elementAttribute?.Namespace, isUnqualified: isUnqualified);
 		}
 
