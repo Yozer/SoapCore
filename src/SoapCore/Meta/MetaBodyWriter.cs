@@ -297,13 +297,19 @@ namespace SoapCore.Meta
 			var typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType);
 
 			var xmlArrayItemAttribute = parameterInfo.Parameter.GetCustomAttribute<XmlArrayItemAttribute>();
-			var typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType);
 			if (xmlArrayItemAttribute != null)
 			{
 				typeToBuild.ChildElementName = xmlArrayItemAttribute.ElementName;
 		}
 
-			AddSchemaType(writer, typeToBuild, parameterName, @namespace: elementAttribute?.Namespace, isUnqualified: isUnqualified);
+			var isArray = false;
+			if (parameterInfo.Parameter.ParameterType.IsArray && elementAttribute != null && xmlArrayAttribute == null)
+			{
+				typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType.GetElementType());
+				isArray = true;
+			}
+
+			AddSchemaType(writer, typeToBuild, parameterName, @namespace: elementAttribute?.Namespace, isUnqualified: isUnqualified, isArray: isArray);
 		}
 
 		private void AddTypes(XmlDictionaryWriter writer)
