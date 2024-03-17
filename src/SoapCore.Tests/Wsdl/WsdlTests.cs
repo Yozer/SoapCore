@@ -944,6 +944,21 @@ namespace SoapCore.Tests.Wsdl
 		}
 
 		[TestMethod]
+		public void CheckXmlElementNullableAttributeWsdl()
+		{
+			StartService(typeof(XmlElementNullableService));
+			var wsdl = GetWsdlFromAsmx();
+			StopServer();
+			Assert.IsNotNull(wsdl);
+
+			var root = XElement.Parse(wsdl);
+			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
+
+			var nullableString = root.XPathSelectElement("//xsd:complexType[@name='TypeWithXmlElementNullableString']/xsd:sequence/xsd:element[@name='StringProperty' and @type='xsd:string' and @nillable='true' and @minOccurs='1' and @maxOccurs='1']", nm);
+			Assert.IsNotNull(nullableString);
+		}
+
+		[TestMethod]
 		public void CheckEnumSpecifiedBoolWsdl()
 		{
 			StartService(typeof(SpecifiedBoolService));

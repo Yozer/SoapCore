@@ -1034,7 +1034,15 @@ namespace SoapCore.Meta
 				var hasSpecifiedBoolean = member.DeclaringType.GetProperties()
 					.Any(p => p.Name == $"{member.Name}Specified" && p.PropertyType == typeof(bool) && p.GetCustomAttribute<XmlIgnoreAttribute>() != null);
 
-				AddSchemaType(writer, toBuild, elementNameFromAttribute ?? member.Name ?? parentTypeToBuild.ChildElementName, isArray: createListWithoutProxyType, isListWithoutWrapper: createListWithoutProxyType, isUnqualified: isUnqualified, defaultValue: defaultValue, hasSpecifiedBoolean: hasSpecifiedBoolean);
+				AddSchemaType(writer,
+					toBuild,
+					elementNameFromAttribute ?? member.Name ?? parentTypeToBuild.ChildElementName,
+					isArray: createListWithoutProxyType,
+					isListWithoutWrapper: createListWithoutProxyType,
+					isUnqualified: isUnqualified,
+					defaultValue: defaultValue,
+					hasSpecifiedBoolean: hasSpecifiedBoolean,
+					forceNullable: elementItem?.IsNullable == true);
 			}
 		}
 
@@ -1054,7 +1062,7 @@ namespace SoapCore.Meta
 			AddSchemaType(writer, new TypeToBuild(type), name, isArray, @namespace, isAttribute, isUnqualified: isUnqualified);
 		}
 
-		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false, bool hasSpecifiedBoolean = false)
+		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false, bool hasSpecifiedBoolean = false, bool forceNullable = false)
 		{
 			var type = toBuild.Type;
 
@@ -1088,6 +1096,10 @@ namespace SoapCore.Meta
 			}
 
 			var underlyingType = Nullable.GetUnderlyingType(type);
+			if (underlyingType == null && forceNullable)
+			{
+				underlyingType = type;
+			}
 
 			//if type is a nullable non-system struct
 			if (underlyingType?.IsValueType == true && !underlyingType.IsEnum && underlyingType.Namespace != null && underlyingType.Namespace != "System" && !underlyingType.Namespace.StartsWith("System."))
@@ -1154,7 +1166,7 @@ namespace SoapCore.Meta
 				}
 				else
 				{
-					writer.WriteAttributeString("minOccurs", type.IsValueType && defaultValue == null && !hasSpecifiedBoolean ? "1" : "0");
+					writer.WriteAttributeString("minOccurs", (type.IsValueType && defaultValue == null && !hasSpecifiedBoolean) || forceNullable ? "1" : "0");
 					writer.WriteAttributeString("maxOccurs", "1");
 					if (defaultValue != null)
 					{
