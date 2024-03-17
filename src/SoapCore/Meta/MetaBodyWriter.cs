@@ -1031,7 +1031,10 @@ namespace SoapCore.Meta
 					}
 				}
 
-				AddSchemaType(writer, toBuild, elementNameFromAttribute ?? member.Name ?? parentTypeToBuild.ChildElementName, isArray: createListWithoutProxyType, isListWithoutWrapper: createListWithoutProxyType, isUnqualified: isUnqualified, defaultValue: defaultValue);
+				var hasSpecifiedBoolean = member.DeclaringType.GetProperties()
+					.Any(p => p.Name == $"{member.Name}Specified" && p.PropertyType == typeof(bool) && p.GetCustomAttribute<XmlIgnoreAttribute>() != null);
+
+				AddSchemaType(writer, toBuild, elementNameFromAttribute ?? member.Name ?? parentTypeToBuild.ChildElementName, isArray: createListWithoutProxyType, isListWithoutWrapper: createListWithoutProxyType, isUnqualified: isUnqualified, defaultValue: defaultValue, hasSpecifiedBoolean: hasSpecifiedBoolean);
 			}
 		}
 
@@ -1051,7 +1054,7 @@ namespace SoapCore.Meta
 			AddSchemaType(writer, new TypeToBuild(type), name, isArray, @namespace, isAttribute, isUnqualified: isUnqualified);
 		}
 
-		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false)
+		private void AddSchemaType(XmlDictionaryWriter writer, TypeToBuild toBuild, string name, bool isArray = false, string @namespace = null, bool isAttribute = false, bool isListWithoutWrapper = false, bool isUnqualified = false, string defaultValue = null, bool isOptionalAttribute = false, bool hasSpecifiedBoolean = false)
 		{
 			var type = toBuild.Type;
 
@@ -1151,7 +1154,7 @@ namespace SoapCore.Meta
 				}
 				else
 				{
-					writer.WriteAttributeString("minOccurs", type.IsValueType && defaultValue == null ? "1" : "0");
+					writer.WriteAttributeString("minOccurs", type.IsValueType && defaultValue == null && !hasSpecifiedBoolean ? "1" : "0");
 					writer.WriteAttributeString("maxOccurs", "1");
 					if (defaultValue != null)
 					{
