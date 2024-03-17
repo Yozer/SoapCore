@@ -944,6 +944,24 @@ namespace SoapCore.Tests.Wsdl
 		}
 
 		[TestMethod]
+		public void CheckNullableArrayOfWsdl()
+		{
+			StartService(typeof(NullableArrayOfService));
+			var wsdl = GetWsdlFromAsmx();
+			StopServer();
+			Assert.IsNotNull(wsdl);
+
+			var root = XElement.Parse(wsdl);
+			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
+
+			var nullableStringArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfString']/xsd:sequence/xsd:element[@name='string' and @type='xsd:string' and @nillable='true' and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(nullableStringArray);
+
+			var intArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='int' and @type='xsd:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(intArray);
+		}
+
+		[TestMethod]
 		public void CheckXmlElementNullableAttributeWsdl()
 		{
 			StartService(typeof(XmlElementNullableService));

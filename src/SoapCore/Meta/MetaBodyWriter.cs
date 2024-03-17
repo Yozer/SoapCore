@@ -720,7 +720,6 @@ namespace SoapCore.Meta
 					if (operation.HeaderType != null)
 					{
 						writer.WriteStartElement(soap, "header", soapNamespace);
-						writer.WriteAttributeString("use", "literal");
 						writer.WriteAttributeString("message", $"tns:{operation.Name}{operation.HeaderType.Name}");
 						writer.WriteAttributeString("part", operation.HeaderType.Name);
 						writer.WriteAttributeString("use", "literal");
@@ -1163,6 +1162,10 @@ namespace SoapCore.Meta
 				{
 					writer.WriteAttributeString("minOccurs", "0");
 					writer.WriteAttributeString("maxOccurs", "unbounded");
+					if (type == typeof(string))
+					{
+						writer.WriteAttributeString("nillable", "true");
+					}
 				}
 				else
 				{
