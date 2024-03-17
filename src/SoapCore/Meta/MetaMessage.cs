@@ -42,22 +42,10 @@ namespace SoapCore.Meta
 		{
 			writer.WriteStartElement(_xmlNamespaceManager.LookupPrefix(Namespaces.WSDL_NS), "definitions", Namespaces.WSDL_NS);
 
-			// Soap11
-			if (Version == MessageVersion.Soap11 || Version == MessageVersion.Soap11WSAddressingAugust2004 || Version == MessageVersion.Soap11WSAddressingAugust2004)
-			{
-				WriteXmlnsAttribute(writer, Namespaces.SOAP11_NS);
-			}
+			WriteXmlnsAttribute(writer, Namespaces.SOAP11_NS);
+			WriteXmlnsAttribute(writer, Namespaces.SOAP12_NS);
 
-			// Soap12
-			else if (Version == MessageVersion.Soap12WSAddressing10 || Version == MessageVersion.Soap12WSAddressingAugust2004)
-			{
-				WriteXmlnsAttribute(writer, Namespaces.SOAP12_NS);
-			}
-			else
-			{
-				throw new ArgumentOutOfRangeException(nameof(Version), "Unsupported MessageVersion encountered while writing envelope.");
-			}
-
+			
 			WriteXmlnsAttribute(writer, _service.GeneralContract.Namespace);
 			WriteXmlnsAttribute(writer, Namespaces.XMLNS_XSD);
 			WriteXmlnsAttribute(writer, Namespaces.HTTP_NS);
