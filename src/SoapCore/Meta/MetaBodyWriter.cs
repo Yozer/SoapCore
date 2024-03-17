@@ -287,7 +287,13 @@ namespace SoapCore.Meta
 								?? typeRootName
 								?? parameterInfo.Parameter.Name;
 
-			AddSchemaType(writer, parameterInfo.Parameter.ParameterType, parameterName, @namespace: elementAttribute?.Namespace, isUnqualified: isUnqualified);
+			var xmlArrayItemAttribute = parameterInfo.Parameter.GetCustomAttribute<XmlArrayItemAttribute>();
+			var typeToBuild = new TypeToBuild(parameterInfo.Parameter.ParameterType);
+			if (xmlArrayItemAttribute != null)
+			{
+				typeToBuild.ChildElementName = xmlArrayItemAttribute.ElementName;
+		}
+			AddSchemaType(writer, typeToBuild, parameterName, @namespace: elementAttribute?.Namespace, isUnqualified: isUnqualified);
 		}
 
 		private void AddTypes(XmlDictionaryWriter writer)

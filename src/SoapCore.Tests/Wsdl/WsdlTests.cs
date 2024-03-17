@@ -962,6 +962,21 @@ namespace SoapCore.Tests.Wsdl
 		}
 
 		[TestMethod]
+		public void CheckArrayParameterWithXmlArrayItemAttributeWsdl()
+		{
+			StartService(typeof(ArrayParameterXmlArrayItem));
+			var wsdl = GetWsdlFromAsmx();
+			StopServer();
+			Assert.IsNotNull(wsdl);
+
+			var root = XElement.Parse(wsdl);
+			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
+
+			var array = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='Item' and @type='xsd:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			Assert.IsNotNull(array);
+		}
+
+		[TestMethod]
 		public void CheckXmlElementNullableAttributeWsdl()
 		{
 			StartService(typeof(XmlElementNullableService));
