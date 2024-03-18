@@ -53,7 +53,7 @@ namespace SoapCore
 
 			writer.WriteStartElement(prefix, "Code", Namespaces.SOAP12_ENVELOPE_NS);
 			writer.WriteStartElement(prefix, "Value", Namespaces.SOAP12_ENVELOPE_NS);
-			writer.WriteString(prefix + ":Sender");
+			writer.WriteString(prefix + ":Receiver");
 			writer.WriteEndElement();
 			writer.WriteEndElement();
 
@@ -136,7 +136,7 @@ namespace SoapCore
 			}
 			else
 			{
-				writer.WriteElementString("faultcode", prefix + ":Client");
+				writer.WriteElementString("faultcode", prefix + ":Server");
 			}
 
 			writer.WriteElementString("faultstring", faultString);
