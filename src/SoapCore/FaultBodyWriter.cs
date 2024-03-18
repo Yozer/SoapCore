@@ -81,6 +81,8 @@ namespace SoapCore
 			var faultString = _faultStringOverride ?? (_exception.InnerException != null ? _exception.InnerException.Message : _exception.Message);
 			var faultDetail = ExtractFaultDetailsAsXmlElement(_exception);
 
+			var prefix = writer.LookupPrefix(Namespaces.SOAP11_ENVELOPE_NS) ?? "s";
+
 			writer.WriteStartElement("Fault", Namespaces.SOAP11_ENVELOPE_NS);
 
 			/* SUPPORT FOR SPECIFYING CUSTOM FAULTCODE AND NAMESPACE
@@ -118,12 +120,12 @@ namespace SoapCore
 					}
 					else
 					{
-						writer.WriteElementString("faultcode", "s:" + faultException.Code.Name);
+						writer.WriteElementString("faultcode", prefix + ":" + faultException.Code.Name);
 					}
 				}
 				else
 				{
-					writer.WriteElementString("faultcode", "s:Client");
+					writer.WriteElementString("faultcode", prefix + ":Client");
 				}
 
 				var actor = faultException.CreateMessageFault()?.Actor;
@@ -134,7 +136,7 @@ namespace SoapCore
 			}
 			else
 			{
-				writer.WriteElementString("faultcode", "s:Client");
+				writer.WriteElementString("faultcode", prefix + ":Client");
 			}
 
 			writer.WriteElementString("faultstring", faultString);
