@@ -501,7 +501,7 @@ namespace SoapCore
 				// Get operation arguments from message
 				var arguments = GetRequestArguments(requestMessage, reader, operation, httpContext);
 
-				ExecuteFiltersAndTune(httpContext, serviceProvider, operation, arguments, serviceInstance);
+				ExecuteFiltersAndTune(httpContext, serviceProvider, operation, arguments, serviceInstance, requestMessage);
 
 				var invoker = serviceProvider.GetService<IOperationInvoker>() ?? new DefaultOperationInvoker();
 				var responseObject = await invoker.InvokeAsync(operation.DispatchMethod, serviceInstance, arguments);
@@ -626,7 +626,7 @@ namespace SoapCore
 			return responseMessage;
 		}
 
-		private void ExecuteFiltersAndTune(HttpContext httpContext, IServiceProvider serviceProvider, OperationDescription operation, object[] arguments, object serviceInstance)
+		private void ExecuteFiltersAndTune(HttpContext httpContext, IServiceProvider serviceProvider, OperationDescription operation, object[] arguments, object serviceInstance, Message message)
 		{
 			// Execute model binding filters
 			object modelBindingOutput = null;
@@ -659,7 +659,7 @@ namespace SoapCore
 			var serviceOperationTuners = serviceProvider.GetServices<IServiceOperationTuner>();
 			foreach (var operationTuner in serviceOperationTuners)
 			{
-				operationTuner.Tune(httpContext, serviceInstance, operation);
+				operationTuner.Tune(httpContext, serviceInstance, operation, message);
 			}
 		}
 

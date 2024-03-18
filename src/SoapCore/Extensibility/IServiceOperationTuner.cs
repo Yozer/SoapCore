@@ -1,3 +1,4 @@
+using System.ServiceModel.Channels;
 using Microsoft.AspNetCore.Http;
 using SoapCore.ServiceModel;
 
@@ -16,6 +17,7 @@ namespace SoapCore.Extensibility
 		/// <param name="httpContext">Current http context</param>
 		/// <param name="serviceInstance">Service instance</param>
 		/// <param name="operation">Operation description</param>
-		void Tune(HttpContext httpContext, object serviceInstance, OperationDescription operation);
+		/// <param name="message">The soap message</param>
+		void Tune(HttpContext httpContext, object serviceInstance, OperationDescription operation, Message message);
 	}
 }
