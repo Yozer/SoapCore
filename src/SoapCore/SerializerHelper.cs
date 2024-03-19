@@ -159,7 +159,7 @@ namespace SoapCore
 			var elementType = xmlElementAttribute?.Type ?? parameterType.GetElementType();
 
 			var arrayItemName = xmlArrayItemAttribute?.ElementName ?? xmlElementAttribute?.ElementName ?? elementType.Name;
-			if (xmlArrayItemAttribute?.ElementName == null && elementType.Namespace?.StartsWith("System") == true)
+			if (xmlArrayItemAttribute?.ElementName == null && xmlElementAttribute?.ElementName == null && elementType.Namespace?.StartsWith("System") == true)
 			{
 				var compiler = new CSharpCodeProvider();
 				var type = new CodeTypeReference(elementType);
