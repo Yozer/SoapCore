@@ -681,6 +681,8 @@ namespace SoapCore
 				.GetServiceKnownTypesHierarchy()
 				.Select(x => x.Type);
 
+			var alreadyProcessedParameters = new HashSet<int>();
+
 			if (!operation.IsMessageContractRequest)
 			{
 				if (xmlReader != null)
@@ -691,7 +693,7 @@ namespace SoapCore
 					while (!xmlReader.EOF)
 					{
 						var parameterInfo = operation.InParameters.FirstOrDefault(p => p.Name == xmlReader.LocalName);
-						if (parameterInfo == null)
+						if (parameterInfo == null || alreadyProcessedParameters.Contains(parameterInfo.Index))
 						{
 							xmlReader.Skip();
 							continue;
@@ -704,6 +706,7 @@ namespace SoapCore
 						}
 
 						lastParameterIndex = parameterInfo.Index;
+						alreadyProcessedParameters.Add(lastParameterIndex);
 
 						var argumentValue = _serializerHelper.DeserializeInputParameter(
 							xmlReader,
