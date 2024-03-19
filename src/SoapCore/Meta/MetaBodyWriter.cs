@@ -300,7 +300,7 @@ namespace SoapCore.Meta
 			if (xmlArrayItemAttribute != null)
 			{
 				typeToBuild.ChildElementName = xmlArrayItemAttribute.ElementName;
-		}
+			}
 
 			var isArray = false;
 			if (parameterInfo.Parameter.ParameterType.IsArray && elementAttribute != null && xmlArrayAttribute == null)
@@ -1294,6 +1294,16 @@ namespace SoapCore.Meta
 					if (newTypeToBuild.IsAnonumous)
 					{
 						AddSchemaComplexType(writer, newTypeToBuild);
+					}
+					else if (typeof(System.Xml.XmlDocument).Equals(type))
+					{
+						writer.WriteStartElement("complexType", Namespaces.XMLNS_XSD);
+						writer.WriteAttributeString("mixed", "true");
+						writer.WriteStartElement("sequence", Namespaces.XMLNS_XSD);
+						writer.WriteStartElement("any", Namespaces.XMLNS_XSD);
+						writer.WriteEndElement(); // any
+						writer.WriteEndElement(); // sequence
+						writer.WriteEndElement(); // complexType
 					}
 					else
 					{

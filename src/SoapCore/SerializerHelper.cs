@@ -92,10 +92,15 @@ namespace SoapCore
 				return new MemoryStream(xmlReader.ReadContentAsBase64(), false);
 			}
 
-			if (elementType == typeof(XmlElement) || elementType == typeof(XmlNode))
+			if (elementType == typeof(XmlElement) || elementType == typeof(XmlNode) || elementType == typeof(XmlDocument))
 			{
 				var xmlDoc = new XmlDocument();
 				xmlDoc.LoadXml(xmlReader.ReadInnerXml());
+				if (elementType == typeof(XmlDocument))
+				{
+					return xmlDoc;
+				}
+
 				var xmlNode = xmlDoc.FirstChild;
 				return xmlNode;
 			}
