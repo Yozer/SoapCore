@@ -256,22 +256,9 @@ namespace SoapCore
 				else
 				{
 					//for complex types
-					var stream = new MemoryStream();
-
-					// write element with name as outResult.Key and type information as outResultType
-					// i.e. <outResult.Key xsi:type="outResultType" ... />
 					var outResultType = outResult.Value.GetType();
 					var serializer = CachedXmlSerializer.GetXmlSerializer(outResultType, outResult.Key, _serviceNamespace);
-					serializer.Serialize(stream, outResult.Value);
-
-					//add outResultType. ugly, but working
-					stream.Position = 0;
-					XmlDocument xdoc = new XmlDocument();
-					xdoc.Load(stream);
-					var attr = xdoc.CreateAttribute("xsi", "type", Namespaces.XMLNS_XSI);
-					attr.Value = outResultType.Name;
-					xdoc.DocumentElement.Attributes.Prepend(attr);
-					writer.WriteRaw(xdoc.DocumentElement.OuterXml);
+					serializer.Serialize(writer, outResult.Value);
 				}
 
 				if (value != null)
