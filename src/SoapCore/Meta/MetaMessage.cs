@@ -22,6 +22,7 @@ namespace SoapCore.Meta
 		public MetaMessage(Message message, ServiceDescription service, XmlNamespaceManager xmlNamespaceManager, string bindingName, bool hasBasicAuthentication)
 		{
 			_xmlNamespaceManager = xmlNamespaceManager;
+			_xmlNamespaceManager.AddNamespace("s", Namespaces.XMLNS_XSD);
 			_message = message;
 			_service = service;
 			_bindingName = bindingName;
