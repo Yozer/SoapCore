@@ -73,6 +73,7 @@ namespace SoapCore
 		public bool GenerateSoapActionWithoutContractName { get; set; } = false;
 
 		public bool NormalizeNewLines { get; set; } = true;
+		public string OverrideBaseUrl { get; set; }
 
 		[Obsolete]
 		public static SoapOptions FromSoapCoreOptions<T>(SoapCoreOptions opt)
@@ -106,6 +107,7 @@ namespace SoapCore
 				UseMicrosoftGuid = opt.UseMicrosoftGuid,
 				GenerateSoapActionWithoutContractName = opt.GenerateSoapActionWithoutContractName,
 				NormalizeNewLines = opt.NormalizeNewLines,
+				OverrideBaseUrl = opt.OverrideBaseUrl,
 			};
 
 #pragma warning disable CS0612 // Type or member is obsolete

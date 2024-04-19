@@ -237,7 +237,16 @@ namespace SoapCore
 
 		private async Task ProcessMeta(HttpContext httpContext, bool showDocumentation)
 		{
-			var baseUrl = httpContext.Request.Scheme + "://" + httpContext.Request.Host + httpContext.Request.PathBase + httpContext.Request.Path;
+			string baseUrl;
+			if(_options.OverrideBaseUrl != null)
+			{
+				baseUrl = _options.OverrideBaseUrl;
+			}
+			else
+			{
+				baseUrl = httpContext.Request.Scheme + "://" + httpContext.Request.Host + httpContext.Request.PathBase + httpContext.Request.Path;
+			}
+
 			var xmlNamespaceManager = GetXmlNamespaceManager(null);
 			var bindingName = !string.IsNullOrWhiteSpace(_options.EncoderOptions[0].BindingName) ? _options.EncoderOptions[0].BindingName : "BasicHttpBinding_" + _service.GeneralContract.Name;
 			var bodyWriter = _options.SoapSerializer == SoapSerializer.XmlSerializer

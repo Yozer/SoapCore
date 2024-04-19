@@ -150,5 +150,10 @@ namespace SoapCore
 		/// Default is true.
 		/// </summary>
 		public bool NormalizeNewLines { get; set; } = true;
+
+		/// <summary>
+		/// Used to override base url for WSDL contract
+		/// </summary>
+		public string OverrideBaseUrl { get; set; }
 	}
 }
