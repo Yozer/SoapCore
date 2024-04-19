@@ -34,6 +34,7 @@ namespace SoapCore.Meta
 		private readonly Dictionary<string, Dictionary<string, string>> _requestedDynamicTypes;
 
 		private bool _buildMicrosoftGuid = false;
+		private readonly WsdlFileOptions _optionsWsdlFileOptions;
 
 		[Obsolete]
 		public MetaBodyWriter(ServiceDescription service, string baseUrl, Binding binding, XmlNamespaceManager xmlNamespaceManager = null)
@@ -43,16 +44,18 @@ namespace SoapCore.Meta
 				xmlNamespaceManager ?? new XmlNamespaceManager(new NameTable()),
 				binding?.Name ?? "BasicHttpBinding_" + service.GeneralContract.Name,
 				new[] { new SoapBindingInfo(binding.MessageVersion ?? MessageVersion.None, null, null) },
-				false)
+				false,
+				null)
 
 		{
 		}
 
-		public MetaBodyWriter(ServiceDescription service, string baseUrl, XmlNamespaceManager xmlNamespaceManager, string bindingName, SoapBindingInfo[] soapBindings, bool buildMicrosoftGuid) : base(isBuffered: true)
+		public MetaBodyWriter(ServiceDescription service, string baseUrl, XmlNamespaceManager xmlNamespaceManager, string bindingName, SoapBindingInfo[] soapBindings, bool buildMicrosoftGuid, WsdlFileOptions optionsWsdlFileOptions) : base(isBuffered: true)
 		{
 			_service = service;
 			_baseUrl = baseUrl;
 			_xmlNamespaceManager = xmlNamespaceManager;
+			_xmlNamespaceManager.AddNamespace("s", "http://www.w3.org/2001/XMLSchema");
 
 			_enumToBuild = new Queue<Type>();
 			_complexTypeToBuild = new Queue<TypeToBuild>();
@@ -64,6 +67,7 @@ namespace SoapCore.Meta
 			PortName = bindingName;
 			SoapBindings = soapBindings;
 			_buildMicrosoftGuid = buildMicrosoftGuid;
+			_optionsWsdlFileOptions = optionsWsdlFileOptions;
 		}
 
 		private SoapBindingInfo[] SoapBindings { get; }
@@ -319,6 +323,8 @@ namespace SoapCore.Meta
 			writer.WriteAttributeString("elementFormDefault", "qualified");
 			writer.WriteAttributeString("targetNamespace", TargetNameSpace);
 
+			WriteXsdImports(writer);
+
 			HashSet<Type> headerTypesWritten = new();
 
 			foreach (var operation in _service.Operations)
@@ -567,6 +573,35 @@ namespace SoapCore.Meta
 			}
 
 			writer.WriteEndElement(); // wsdl:types
+		}
+
+		private void WriteXsdImports(XmlDictionaryWriter writer)
+		{
+			if(_optionsWsdlFileOptions == null)
+			{
+				return;
+			}
+
+			var xsdFolder = _optionsWsdlFileOptions.AppPath + Path.AltDirectorySeparatorChar + _optionsWsdlFileOptions.WebServiceWSDLMapping.First().Value.SchemaFolder;
+			var xsdFiles = Directory.GetFiles(xsdFolder, "*.xsd", SearchOption.TopDirectoryOnly);
+
+			foreach (var xsdFile in xsdFiles)
+			{
+				var fileName = Path.GetFileName(xsdFile);
+				writer.WriteStartElement("import", Namespaces.XMLNS_XSD);
+				writer.WriteAttributeString("namespace", "http://tempuri.org/" + fileName);
+				writer.WriteEndElement(); // import
+			}
+
+			foreach (var xsdFile in xsdFiles)
+			{
+				var fileName = Path.GetFileName(xsdFile);
+				var location = _baseUrl + "?schema=" + Path.GetFileNameWithoutExtension(xsdFile);
+				writer.WriteStartElement("import", Namespaces.XMLNS_XSD);
+				writer.WriteAttributeString("schemaLocation", location);
+				writer.WriteAttributeString("namespace", "http://tempuri.org/" + fileName);
+				writer.WriteEndElement(); // import
+			}
 		}
 
 		private void AddMessage(XmlDictionaryWriter writer)

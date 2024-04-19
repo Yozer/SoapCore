@@ -127,19 +127,16 @@ namespace SoapCore
 						{
 							await ProcessWsdlImport(httpContext);
 						}
+						else if (httpContext.Request.Query.ContainsKey("schema") && _options.WsdlFileOptions != null)
+						{
+							await ProcessXsdSchemaImport(httpContext);
+						}
 						else if (string.IsNullOrEmpty(httpContext.Request.ContentType) || httpContext.Request.Query.ContainsKey("wsdl"))
 						{
 							// Shows automatically generated documentation based on the generated WSDL (WIP)
 							var showDocumentation = httpContext.Request.Query.ContainsKey("documentation");
 
-							if (_options.WsdlFileOptions != null)
-							{
-								await ProcessMetaFromFile(httpContext, showDocumentation);
-							}
-							else
-							{
-								await ProcessMeta(httpContext, showDocumentation);
-							}
+							await ProcessMeta(httpContext, showDocumentation);
 						}
 					}
 					else
@@ -244,7 +241,7 @@ namespace SoapCore
 			var xmlNamespaceManager = GetXmlNamespaceManager(null);
 			var bindingName = !string.IsNullOrWhiteSpace(_options.EncoderOptions[0].BindingName) ? _options.EncoderOptions[0].BindingName : "BasicHttpBinding_" + _service.GeneralContract.Name;
 			var bodyWriter = _options.SoapSerializer == SoapSerializer.XmlSerializer
-				? new MetaBodyWriter(_service, baseUrl, xmlNamespaceManager, bindingName, _messageEncoders.Select(me => new SoapBindingInfo(me.MessageVersion, me.BindingName, me.PortName)).ToArray(), _options.UseMicrosoftGuid)
+				? new MetaBodyWriter(_service, baseUrl, xmlNamespaceManager, bindingName, _messageEncoders.Select(me => new SoapBindingInfo(me.MessageVersion, me.BindingName, me.PortName)).ToArray(), _options.UseMicrosoftGuid, _options.WsdlFileOptions)
 				: (BodyWriter)new MetaWCFBodyWriter(_service, baseUrl, bindingName, _options.UseBasicAuthentication, _messageEncoders.Select(me => new SoapBindingInfo(me.MessageVersion, me.BindingName, me.PortName)).ToArray());
 
 			//assumption that you want soap12 if your service supports that
@@ -1043,6 +1040,31 @@ namespace SoapCore
 			//we should use text/xml in wsdl page for browser compability.
 			httpContext.Response.ContentType = "text/xml;charset=UTF-8";
 			await httpContext.Response.WriteAsync(modifiedXsd);
+		}
+
+		private async Task ProcessXsdSchemaImport(HttpContext httpContext)
+		{
+			var meta = GetMeta(httpContext);
+			string xsdFile = httpContext.Request.Query["schema"];
+
+			//Check to prevent path traversal
+			if (string.IsNullOrEmpty(xsdFile) || Path.GetFileName(xsdFile) != xsdFile)
+			{
+				throw new ArgumentNullException("xsd parameter contains illegal values");
+			}
+
+			if (Path.GetExtension(xsdFile) == string.Empty)
+			{
+				xsdFile += ".xsd";
+			}
+
+			string path = _options.WsdlFileOptions.AppPath;
+			string safePath = path + Path.AltDirectorySeparatorChar + meta.XsdFolder + Path.AltDirectorySeparatorChar + xsdFile;
+			string xsd = await meta.ReadLocalFileAsync(safePath);
+
+			//we should use text/xml in wsdl page for browser compability.
+			httpContext.Response.ContentType = "text/xml;charset=UTF-8";
+			await httpContext.Response.WriteAsync(xsd);
 		}
 
 		private async Task ProcessWsdlImport(HttpContext httpContext)
