@@ -222,7 +222,7 @@ namespace SoapCore.Tests.MessageContract
 				Assert.IsNotNull(element);
 
 				//Check correct type of part
-				element = root.SelectSingleNode("/wsdl:definitions/wsdl:message[contains(@name, '_InputMessage')]/wsdl:part[@element='tns:ReferenceNumber']", nsmgr);
+				element = root.SelectSingleNode("/wsdl:definitions/wsdl:message[contains(@name, 'SoapIn')]/wsdl:part[@element='tns:ReferenceNumber']", nsmgr);
 				Assert.IsNotNull(element);
 
 				//Check correct return element name of operation PullData
@@ -230,7 +230,7 @@ namespace SoapCore.Tests.MessageContract
 				Assert.IsNotNull(element);
 
 				//Check correct type of part
-				element = root.SelectSingleNode("/wsdl:definitions/wsdl:message[contains(@name, '_OutputMessage')]/wsdl:part[@element='tns:ReferenceNumber']", nsmgr);
+				element = root.SelectSingleNode("/wsdl:definitions/wsdl:message[contains(@name, 'SoapOut')]/wsdl:part[@element='tns:ReferenceNumber']", nsmgr);
 
 				Assert.IsNotNull(element);
 			}

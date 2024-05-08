@@ -231,7 +231,7 @@ namespace SoapCore.Tests
 					faultElement.Element(XName.Get("Code", "http://www.w3.org/2003/05/soap-envelope"));
 
 				Assert.IsNotNull(codeElement);
-				Assert.AreEqual("s:Sender", codeElement.Value);
+				Assert.AreEqual("s:Receiver", codeElement.Value);
 
 				var reasonElementText =
 					faultElement
@@ -286,7 +286,7 @@ namespace SoapCore.Tests
 					faultElement.Element(XName.Get("Code", "http://www.w3.org/2003/05/soap-envelope"));
 
 				Assert.IsNotNull(codeElement);
-				Assert.AreEqual("s:Sender", codeElement.Value);
+				Assert.AreEqual("s:Receiver", codeElement.Value);
 
 				var reasonElementText =
 					faultElement

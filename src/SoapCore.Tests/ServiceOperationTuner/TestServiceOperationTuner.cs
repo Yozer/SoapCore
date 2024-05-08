@@ -1,3 +1,4 @@
+using System.ServiceModel.Channels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using SoapCore;
@@ -18,7 +19,7 @@ namespace SoapCore.Tests.ServiceOperationTuner
 			IsBodyAvailable = false;
 		}
 
-		public void Tune(HttpContext httpContext, object serviceInstance, ServiceModel.OperationDescription operation)
+		public void Tune(HttpContext httpContext, object serviceInstance, ServiceModel.OperationDescription operation, Message message)
 		{
 			IsCalled = true;
 			if ((serviceInstance != null) && (serviceInstance is TestService)

@@ -852,7 +852,7 @@ namespace SoapCore.Tests.Wsdl
 			else
 			{
 				// XmlSerializer serializes DateTimeOffset as string
-				Assert.AreEqual("xsd:string", responseDateElem.Attribute("type").Value);
+				Assert.AreEqual("s:string", responseDateElem.Attribute("type").Value);
 
 				// DateTimeOffset is a ValueType
 				Assert.AreEqual("1", responseDateElem.Attribute("minOccurs").Value);
@@ -896,32 +896,32 @@ namespace SoapCore.Tests.Wsdl
 			var root = XElement.Parse(wsdl);
 			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
 
-			var nullableArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongNullableArray' and @type='tns:ArrayOfNullableLong' and @nillable='true']", nm);
+			var nullableArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongNullableArray' and @type='tns:ArrayOfNullableLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(nullableArray);
 
-			var array = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongArray' and @type='tns:ArrayOfLong' and @nillable='true']", nm);
+			var array = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongArray' and @type='tns:ArrayOfLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(array);
 
-			var arrayArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongArrayArray' and @type='tns:ArrayOfArrayOfLong' and @nillable='true']", nm);
+			var arrayArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='LongArrayArray' and @type='tns:ArrayOfArrayOfLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(arrayArray);
 
-			var stringListList = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='StringListList' and @type='tns:ArrayOfArrayOfString' and @nillable='true']", nm);
+			var stringListList = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='StringListList' and @type='tns:ArrayOfArrayOfString' and not(@nillable)]", nm);
 			Assert.IsNotNull(stringListList);
 
 			// verify that ArrayOfInnerClass uses upper-case "i", even though the class starts with a lower-case letter.
-			var innerClassList = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='InnerClassList' and @type='tns:ArrayOfInnerClass' and @nillable='true']", nm);
+			var innerClassList = root.XPathSelectElement("//xsd:complexType[@name='ArrayRequest']/xsd:sequence/xsd:element[@name='InnerClassList' and @type='tns:ArrayOfInnerClass' and not(@nillable)]", nm);
 			Assert.IsNotNull(innerClassList);
 
-			var nullableEnumerable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongNullableEnumerable' and @type='tns:ArrayOfNullableLong' and @nillable='true']", nm);
+			var nullableEnumerable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongNullableEnumerable' and @type='tns:ArrayOfNullableLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(nullableEnumerable);
 
-			var enumerable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongEnumerable' and @type='tns:ArrayOfLong' and @nillable='true']", nm);
+			var enumerable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongEnumerable' and @type='tns:ArrayOfLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(enumerable);
 
-			var enumerableEnumberable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongEnumerableEnumerable' and @type='tns:ArrayOfArrayOfLong' and @nillable='true']", nm);
+			var enumerableEnumberable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='LongEnumerableEnumerable' and @type='tns:ArrayOfArrayOfLong' and not(@nillable)]", nm);
 			Assert.IsNotNull(enumerableEnumberable);
 
-			var stringEnumerableEnumberable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='StringEnumerableEnumerable' and @type='tns:ArrayOfArrayOfString' and @nillable='true']", nm);
+			var stringEnumerableEnumberable = root.XPathSelectElement("//xsd:complexType[@name='EnumerableResponse']/xsd:sequence/xsd:element[@name='StringEnumerableEnumerable' and @type='tns:ArrayOfArrayOfString' and not(@nillable)]", nm);
 			Assert.IsNotNull(stringEnumerableEnumberable);
 		}
 
@@ -954,10 +954,10 @@ namespace SoapCore.Tests.Wsdl
 			var root = XElement.Parse(wsdl);
 			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
 
-			var nullableStringArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfString']/xsd:sequence/xsd:element[@name='string' and @type='xsd:string' and @nillable='true' and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			var nullableStringArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfString']/xsd:sequence/xsd:element[@name='string' and @type='s:string' and @nillable='true' and @minOccurs='0' and @maxOccurs='unbounded']", nm);
 			Assert.IsNotNull(nullableStringArray);
 
-			var intArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='int' and @type='xsd:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			var intArray = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='int' and @type='s:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
 			Assert.IsNotNull(intArray);
 		}
 
@@ -993,7 +993,7 @@ namespace SoapCore.Tests.Wsdl
 			var root = XElement.Parse(wsdl);
 			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
 
-			var array = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='Item' and @type='xsd:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			var array = root.XPathSelectElement("//xsd:complexType[@name='ArrayOfInt']/xsd:sequence/xsd:element[@name='Item' and @type='s:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
 			Assert.IsNotNull(array);
 		}
 
@@ -1023,7 +1023,7 @@ namespace SoapCore.Tests.Wsdl
 			var root = XElement.Parse(wsdl);
 			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
 
-			var array = root.XPathSelectElement("//xsd:element[@name='Test']/xsd:complexType/xsd:sequence/xsd:element[@name='Test' and @type='xsd:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
+			var array = root.XPathSelectElement("//xsd:element[@name='Test']/xsd:complexType/xsd:sequence/xsd:element[@name='Test' and @type='s:int' and not(@nillable) and @minOccurs='0' and @maxOccurs='unbounded']", nm);
 			Assert.IsNotNull(array);
 		}
 
@@ -1038,7 +1038,7 @@ namespace SoapCore.Tests.Wsdl
 			var root = XElement.Parse(wsdl);
 			var nm = Namespaces.CreateDefaultXmlNamespaceManager(false);
 
-			var nullableString = root.XPathSelectElement("//xsd:complexType[@name='TypeWithXmlElementNullableString']/xsd:sequence/xsd:element[@name='StringProperty' and @type='xsd:string' and @nillable='true' and @minOccurs='1' and @maxOccurs='1']", nm);
+			var nullableString = root.XPathSelectElement("//xsd:complexType[@name='TypeWithXmlElementNullableString']/xsd:sequence/xsd:element[@name='StringProperty' and @type='s:string' and @nillable='true' and @minOccurs='1' and @maxOccurs='1']", nm);
 			Assert.IsNotNull(nullableString);
 		}
 
@@ -1171,8 +1171,8 @@ namespace SoapCore.Tests.Wsdl
 			var choiceComplexTypeElement = root.XPathSelectElement("//xsd:complexType[@name='ResultResponse']", nm);
 			Assert.IsNotNull(choiceComplexTypeElement);
 
-			Assert.IsNotNull(choiceComplexTypeElement.XPathSelectElement("//xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='first' and @type='xsd:int']", nm));
-			Assert.IsNotNull(choiceComplexTypeElement.XPathSelectElement("//xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='second' and @type='xsd:string']", nm));
+			Assert.IsNotNull(choiceComplexTypeElement.XPathSelectElement("//xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='first' and @type='s:int']", nm));
+			Assert.IsNotNull(choiceComplexTypeElement.XPathSelectElement("//xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='second' and @type='s:string']", nm));
 		}
 
 		[DataTestMethod]
@@ -1297,7 +1297,7 @@ namespace SoapCore.Tests.Wsdl
 			var defaultBindingName = !string.IsNullOrWhiteSpace(bindingName) ? bindingName : "BasicHttpBinding";
 			var bodyWriter = serializer == SoapSerializer.DataContractSerializer
 				? new MetaWCFBodyWriter(service, baseUrl, defaultBindingName, false, new[] { new SoapBindingInfo(MessageVersion.None, bindingName, portName) }) as BodyWriter
-				: new MetaBodyWriter(service, baseUrl, xmlNamespaceManager, defaultBindingName, new[] { new SoapBindingInfo(MessageVersion.None, bindingName, portName) }, useMicrosoftGuid) as BodyWriter;
+				: new MetaBodyWriter(service, baseUrl, xmlNamespaceManager, defaultBindingName, new[] { new SoapBindingInfo(MessageVersion.None, bindingName, portName) }, useMicrosoftGuid, null) as BodyWriter;
 			var encoder = new SoapMessageEncoder(MessageVersion.Soap12WSAddressingAugust2004, Encoding.UTF8, false, XmlDictionaryReaderQuotas.Max, false, false, null, bindingName, portName, true);
 			var responseMessage = Message.CreateMessage(encoder.MessageVersion, null, bodyWriter);
 			responseMessage = new MetaMessage(responseMessage, service, xmlNamespaceManager, defaultBindingName, false);
