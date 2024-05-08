@@ -173,14 +173,14 @@ namespace SoapCore
 		}
 
 #if !NETCOREAPP3_0_OR_GREATER
-		private static Task WriteMessageAsync(SoapMessageEncoder messageEncoder, Message responseMessage, HttpContext httpContext, bool indentXml)
+		private static Task WriteMessageAsync(SoapMessageEncoder messageEncoder, Message responseMessage, HttpContext httpContext, bool indentXml, bool canOverrideContentType = true)
 		{
-			return messageEncoder.WriteMessageAsync(responseMessage, httpContext, httpContext.Response.Body, indentXml);
+			return messageEncoder.WriteMessageAsync(responseMessage, httpContext, httpContext.Response.Body, indentXml, canOverrideContentType);
 		}
 #else
-		private static Task WriteMessageAsync(SoapMessageEncoder messageEncoder, Message responseMessage, HttpContext httpContext, bool indentXml)
+		private static Task WriteMessageAsync(SoapMessageEncoder messageEncoder, Message responseMessage, HttpContext httpContext, bool indentXml, bool canOverrideContentType = true)
 		{
-			return messageEncoder.WriteMessageAsync(responseMessage, httpContext, httpContext.Response.BodyWriter, indentXml);
+			return messageEncoder.WriteMessageAsync(responseMessage, httpContext, httpContext.Response.BodyWriter, indentXml, canOverrideContentType);
 		}
 #endif
 
@@ -280,7 +280,7 @@ namespace SoapCore
 			//we should use text/xml in wsdl page for browser compability.
 			httpContext.Response.ContentType = "text/xml;charset=UTF-8"; // _messageEncoders[0].ContentType;
 
-			await WriteMessageAsync(messageEncoder, responseMessage, httpContext, _options.IndentWsdl);
+			await WriteMessageAsync(messageEncoder, responseMessage, httpContext, _options.IndentWsdl, canOverrideContentType: false);
 		}
 
 		private async Task ProcessOperation(HttpContext httpContext, IServiceProvider serviceProvider)

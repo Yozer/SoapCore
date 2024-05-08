@@ -167,7 +167,7 @@ namespace SoapCore.MessageEncoder
 			return Message.CreateMessage(reader, maxSizeOfHeaders, MessageVersion);
 		}
 
-		public virtual async Task WriteMessageAsync(Message message, HttpContext httpContext, PipeWriter pipeWriter, bool indentXml)
+		public virtual async Task WriteMessageAsync(Message message, HttpContext httpContext, PipeWriter pipeWriter, bool indentXml, bool canOverrideContentType = true)
 		{
 			if (message == null)
 			{
@@ -206,7 +206,7 @@ namespace SoapCore.MessageEncoder
 			//Set Content-length in Response
 			httpContext.Response.ContentLength = memoryStream.Length;
 
-			if (_overwriteResponseContentType)
+			if (canOverrideContentType && _overwriteResponseContentType)
 			{
 				httpContext.Response.ContentType = ContentType;
 			}
@@ -216,7 +216,7 @@ namespace SoapCore.MessageEncoder
 			await pipeWriter.FlushAsync();
 		}
 
-		public virtual async Task WriteMessageAsync(Message message, HttpContext httpContext, Stream stream, bool indentXml)
+		public virtual async Task WriteMessageAsync(Message message, HttpContext httpContext, Stream stream, bool indentXml, bool canOverrideContentType = true)
 		{
 			if (message == null)
 			{
@@ -251,6 +251,11 @@ namespace SoapCore.MessageEncoder
 			{
 				// Set Content-Length in response. This will disable chunked transfer-encoding.
 				httpContext.Response.ContentLength = memoryStream.Length;
+
+				if (canOverrideContentType && _overwriteResponseContentType)
+				{
+					httpContext.Response.ContentType = ContentType;
+				}
 			}
 
 			memoryStream.Seek(0, SeekOrigin.Begin);
